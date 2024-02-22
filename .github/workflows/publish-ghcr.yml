@@ -17,4 +17,4 @@ jobs:
               run: |
                 docker login --username prajodhpragath --password ${{secrets.SECRET_KEY}} ghcr.io
                 docker build -t ghcr.io/prajodh/SE19-backend:latest --file dockerfile .
-                docker push ghcr.io/prajodh/SE19-backend:latest
+                docker push ghcr.io/prajodh/se19backend:latest
