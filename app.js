@@ -19,8 +19,8 @@ const auth = require("./routes/login")
 
 app.use("/api/v1/auth",auth)
 
-const cars = require("./routes/cars")
-app.use("/api/v1/cars", authenticatUser, cars)
+const carsListings = require("./routes/carsListings")
+app.use("/api/v1/cars", authenticatUser, carsListings)
 
 
 

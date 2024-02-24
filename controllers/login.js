@@ -1,11 +1,13 @@
 const User = require("../models/login")
 const {StatusCodes} = require('http-status-codes')
 
+
 const register = async (req,res)=>{
      const user = await User.create({...req.body})
      const token = user.createJWT()
      res.status(StatusCodes.OK).cookie('token',token,{ maxAge: 900000, httpOnly: true }).json({message:"created User",data:{username:user.username,token},status_code:StatusCodes.CREATED})
 }
+
 
 const login = async (req,res)=>{
      const {email,password} = req.body
