@@ -2,15 +2,15 @@ const {getAllCars, createCar, getSingleCar, updateCar, deleteCar} = require("../
 const express = require("express")
 const router = express.Router()
 
-router.get("/getAllCars",getAllCars)
+router.get("/getAllCarsListings",getAllCars)
 
-router.post("/createCar",createCar)
+router.post("/createCarListings",createCar)
 
-router.get("/getSingleCar/:id",getSingleCar)
+router.get("/getSingleCarListings/:id",getSingleCar)
 
-router.patch("/updateCar/:id",updateCar)
+router.patch("/updateCarListings/:id",updateCar)
 
-router.delete("/deleteCar/:id",deleteCar)
+router.delete("/deleteCarListings/:id",deleteCar)
 
 
 module.exports = router
