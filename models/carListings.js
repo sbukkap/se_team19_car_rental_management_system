@@ -51,6 +51,11 @@ const listingSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
+    },
+    rentStatus:{
+        type: Boolean,
+        default: false
+
     }
 }, {timestamps: true});
 

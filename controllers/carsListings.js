@@ -4,7 +4,17 @@ const {StatusCodes} = require("http-status-codes")
 
 const getAllCars = async(req,res)=>{
     /* api to get all car orders to show to renters */
-    const cars = await carListings.find({}).sort('createdAt')
+    const cars = await carListings.find({rentStatus:false}).sort('createdAt')
+    if (! cars){
+        res.status(StatusCodes.OK).json({message:"success but no ads", data:{}, status_code:StatusCodes.OK})
+    }
+    res.status(StatusCodes.OK).json({message:"success", data:cars, status_code:StatusCodes.OK})
+}
+
+
+const getAllOwnerCarsListings = async(req,res)=>{
+    /* api to get all car posted for rent by the user*/
+    const cars = await carListings.find({rentStatus:false, ownerId:req.user.userID}).sort('createdAt')
     if (! cars){
         res.status(StatusCodes.OK).json({message:"success but no ads", data:{}, status_code:StatusCodes.OK})
     }
@@ -48,4 +58,4 @@ const deleteCar = async(req,res)=>{
 }
 
 
-module.exports = {getAllCars, createCar, getSingleCar, updateCar, deleteCar}
+module.exports = {getAllCars, getAllOwnerCarsListings, createCar, getSingleCar, updateCar, deleteCar}
