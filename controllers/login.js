@@ -47,8 +47,8 @@ const forgetPassword = async(req,res) =>{
           const sgMail = require('@sendgrid/mail')
           sgMail.setApiKey(process.env.SENDGRID_API_KEY)
           const msg = {
-          to: req.body.email, // Change to your recipient
-          from: 'hpass609@gmail.com', // Change to your verified sender
+          to: req.body.email, 
+          from: 'hpass609@gmail.com', 
           subject: 'OTP for verification',
           text: text,
           }
