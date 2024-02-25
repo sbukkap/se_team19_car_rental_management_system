@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 var bcrypt = require("bcryptjs")
 const jwt = require('jsonwebtoken')
+const crypto = require('crypto')
 require("dotenv")
 
 const userSchema = new mongoose.Schema({
@@ -21,8 +22,12 @@ password:{
 },
 otp:{
     type: String,
-    default: "nootp" 
+    default: null
 },
+otpExpire:{
+    type: String,
+    default: null
+}
 
 })
 
@@ -44,4 +49,11 @@ userSchema.methods.comparePassword = async function(candidatePassword){
     return isMatch
 }
 
+userSchema.methods.createOtp = function(){
+    let otp_ = Math.floor(1000 + Math.random() * 9000).toString()
+    this.otp =  crypto.createHash('sha256').update(otp_.toString()).digest('hex')
+    this.otpExpire = new Date(Date.now() + 10 * 60 * 1000);
+    return otp_.toString()
+ 
+}
 module.exports = mongoose.model('User',userSchema)

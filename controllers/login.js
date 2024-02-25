@@ -1,5 +1,6 @@
 const User = require("../models/login")
 const {StatusCodes} = require('http-status-codes')
+const crypto = require('crypto')
 
 
 const register = async (req,res)=>{
@@ -10,7 +11,8 @@ const register = async (req,res)=>{
 
 
 const login = async (req,res)=>{
-     const {email,password} = req.body
+     try {
+          const {email,password} = req.body
      if (!email || !password){
           res.status(400).json("Bad request provide all the fields")
      }
@@ -24,16 +26,51 @@ const login = async (req,res)=>{
      }
      const token = user.createJWT()
      res.status(StatusCodes.OK).cookie('token',token,{ maxAge: 900000, httpOnly: true }).json({message:"login Succesful",data:{username:user.username,token},status_code:StatusCodes.OK})
+     } catch (error) {
+          console.log(error)
+          res.status(StatusCodes.UNAUTHORIZED).json({message:"Invalid login",data:{},status_code:StatusCodes.UNAUTHORIZED})
+     }
+     
 
 }
 
 
 const forgetPassword = async(req,res) =>{
-     res.send("reset_passowrd")
+          const user = await User.findOne({email:req.body.email})
+          if (!user){
+               res.status(StatusCodes.NOT_FOUND).json({msg:"User Not Fount",data:{},status_code:StatusCodes.NOT_FOUND})
+          }
+          const otp = user.createOtp()
+          await user.save()
+          text = 'the verification otp is '+ otp
+     
+          const sgMail = require('@sendgrid/mail')
+          sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+          const msg = {
+          to: req.body.email, // Change to your recipient
+          from: 'hpass609@gmail.com', // Change to your verified sender
+          subject: 'OTP for verification',
+          text: text,
+          }
+          const info = sgMail.send(msg)
+          res.status(StatusCodes.OK).json({msg:"email has been sent",data:info,status_code:StatusCodes.OK })
+          
+     
 }
 
 const resetPassword = async(req,res) =>{
-     res.send("reset_passowrd")
+     const otp_encrpyt = crypto.createHash('sha256').update(req.body.otp).digest('hex')
+     const user = await User.findOne({otp: otp_encrpyt, otpExpire: {$gt: Date.now()}})
+     if (!user){
+          res.status(StatusCodes.NOT_FOUND).json({message:"otp is invalid or expired",data:{},status_code:StatusCodes.NOT_FOUND})
+     }
+     user.password = req.body.password
+     user.otp = undefined
+     user.otpExpire = undefined
+
+     user.save()
+
+     res.status(StatusCodes.OK).json({message:"reset done",data:{user},status_code:StatusCodes.OK})
 }
 
 
