@@ -28,5 +28,13 @@ const login = async (req,res)=>{
 }
 
 
+const forgetPassword = async(req,res) =>{
+     res.send("reset_passowrd")
+}
 
-module.exports = {register,login}
+const resetPassword = async(req,res) =>{
+     res.send("reset_passowrd")
+}
+
+
+module.exports = {register, login, forgetPassword, resetPassword}

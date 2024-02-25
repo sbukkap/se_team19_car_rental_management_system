@@ -19,6 +19,10 @@ password:{
     required:[true, 'please provide password'],
 
 },
+otp:{
+    type: String,
+    default: "nootp" 
+},
 
 })
 
