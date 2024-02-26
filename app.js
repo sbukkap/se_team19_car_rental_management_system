@@ -6,6 +6,13 @@ const app = express()
 const morgan = require('morgan')
 const notFound = require("./middleware/not-found")
 const errorHandlerMiddleware = require("./middleware/error-handlers")
+//connect to cloud storage
+const cloudinary = require("cloudinary").v2
+cloudinary.config({
+    cloud_name:process.env.CLOUD_NAME,
+    api_key:process.env.CLOUD_API_KEY,
+    api_secret:process.env.CLOUD_API_SECRET
+})
 //connect to MongoDB
 const connectDB = require("./db/connect")
 const authenticatUser = require("./middleware/authentication")
