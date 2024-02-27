@@ -1,10 +1,12 @@
-const {getAllCars, getAllOwnerCarsListings, createCar, getSingleCar, updateCar, deleteCar} = require("../controllers/carsListings")
+const {getAllCars, getAllOwnerCarsListings, createCar, getSingleCar, updateCar, deleteCar, searchCars} = require("../controllers/carsListings")
 const express = require("express")
 const router = express.Router()
 
 router.get("/getAllCarsListings",getAllCars)
 
 router.get("/getAllOwnerCarsListings",getAllOwnerCarsListings)
+
+router.get("/searchCars", searchCars)
 
 router.post("/createCarListings",createCar)
 

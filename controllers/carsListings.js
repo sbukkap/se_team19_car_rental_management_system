@@ -59,10 +59,7 @@ const deleteCar = async(req,res)=>{
 
 const searchCars = async (req, res) => {
     try {
-        // Extract search query parameters from the request
         const { carMake, carModel, year, transmission, fuelType, minSeats, maxSeats, minPricePerDay, maxPricePerDay, startDate, endDate, location } = req.query;
-
-        // Construct the search query based on the provided parameters
         const searchQuery = {};
 
         if (carMake) {
@@ -85,18 +82,18 @@ const searchCars = async (req, res) => {
             searchQuery.fuelType = fuelType;
         }
 
-        if (minSeats && maxSeats) {
-            searchQuery.seats = { $gte: minSeats, $lte: maxSeats };
-        }
+        // if (minSeats && maxSeats) {
+        //     searchQuery.seats = { $gte: minSeats, $lte: maxSeats };
+        // }
 
-        if (minPricePerDay && maxPricePerDay) {
-            searchQuery.pricePerDay = { $gte: minPricePerDay, $lte: maxPricePerDay };
-        }
+        // if (minPricePerDay && maxPricePerDay) {
+        //     searchQuery.pricePerDay = { $gte: minPricePerDay, $lte: maxPricePerDay };
+        // }
 
-        if (startDate && endDate) {
-            searchQuery.availableFrom = { $lte: new Date(startDate) };
-            searchQuery.availableTo = { $gte: new Date(endDate) };
-        }
+        // if (startDate && endDate) {
+        //     searchQuery.availableFrom = { $lte: new Date(startDate) };
+        //     searchQuery.availableTo = { $gte: new Date(endDate) };
+        // }
 
         if (location) {
             searchQuery.location = location;
@@ -108,10 +105,8 @@ const searchCars = async (req, res) => {
             return res.status(StatusCodes.NOT_FOUND).json({ message: "No cars found matching the search criteria", data: {}, status_code: StatusCodes.NOT_FOUND });
         }
 
-        // Return the search results
         res.status(StatusCodes.OK).json({ message: "Success", data: cars, status_code: StatusCodes.OK });
     } catch (error) {
-        // Handle errors
         console.error(error);
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Internal server error", data: {}, status_code: StatusCodes.INTERNAL_SERVER_ERROR });
     }
