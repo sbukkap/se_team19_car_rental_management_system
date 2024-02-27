@@ -9,7 +9,6 @@ const register = async (req,res)=>{
      res.status(StatusCodes.OK).cookie('token',token,{ maxAge: 900000, httpOnly: true }).json({message:"created User",data:{username:user.username,token},status_code:StatusCodes.CREATED})
 }
 
-
 const login = async (req,res)=>{
      try {
           const {email,password} = req.body
@@ -33,7 +32,6 @@ const login = async (req,res)=>{
      
 
 }
-
 
 const forgetPassword = async(req,res) =>{
           const user = await User.findOne({email:req.body.email})
@@ -72,6 +70,5 @@ const resetPassword = async(req,res) =>{
 
      res.status(StatusCodes.OK).json({message:"reset done",data:{user},status_code:StatusCodes.OK})
 }
-
 
 module.exports = {register, login, forgetPassword, resetPassword}
