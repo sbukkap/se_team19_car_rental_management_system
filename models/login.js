@@ -27,9 +27,13 @@ otp:{
 otpExpire:{
     type: String,
     default: null
+},
+avatar: {
+    type:String,
+    default: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRk8Gl9eN3We2TcCYbPyAxqG6SqN02Wey-1vB0iuhZfyw&s"
 }
 
-})
+});
 
 
 
