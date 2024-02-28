@@ -3,12 +3,47 @@ const {StatusCodes} = require("http-status-codes")
 
 
 const getAllCars = async(req,res)=>{
-    /* api to get all car orders to show to renters */
-    const cars = await carListings.find({rentStatus:false}).sort('createdAt')
-    if (! cars){
+    /* api to get all car orders to show to renters  it has been updated to do serach operations too */
+    const {fuelType, transmission, mileage, carMake, carModel, seats, pricePerDay, location, sort} = req.query
+    queryObject = {}
+    if (fuelType){
+        queryObject.fuelType = fuelType
+    }
+    if (transmission){
+        queryObject.transmission = transmission
+    }
+    if (mileage){
+        queryObject.mileage = mileage
+    }
+    if (carMake){
+        queryObject.carMake = {$regex: carMake, $options:'i'}
+    }
+    if (carModel){
+        queryObject.carModel = carModel
+    }
+    if (seats){
+        queryObject.seats = seats
+    }
+    if (pricePerDay){
+        queryObject.pricePerDay = pricePerDay
+    }
+    if (location){
+        queryObject.location = location
+    }
+    queryObject.rentStatus = false
+    let cars = carListings.find(queryObject)
+    if (sort){
+        const sort_index = req.query.sort.split(",").join(' ')
+        console.log(sort_index)
+    }
+    else{
+        cars = cars.sort("createdAt")
+    }
+    const products = await cars
+    if (! products){
         res.status(StatusCodes.OK).json({message:"success but no ads", data:{}, status_code:StatusCodes.OK})
     }
-    res.status(StatusCodes.OK).json({message:"success", data:cars, status_code:StatusCodes.OK})
+    res.status(StatusCodes.OK).json({message:"success", data:products, status_code:StatusCodes.OK})
 }
 
 
