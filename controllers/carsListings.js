@@ -13,7 +13,7 @@ const getAllCars = async(req,res)=>{
         queryObject.transmission = transmission
     }
     if (mileage){
-        queryObject.mileage = mileage
+        queryObject.mileage = { $gt:Number(mileage)-1}
     }
     if (carMake){
         queryObject.carMake = {$regex: carMake, $options:'i'}
@@ -22,10 +22,10 @@ const getAllCars = async(req,res)=>{
         queryObject.carModel = carModel
     }
     if (seats){
-        queryObject.seats = seats
+        queryObject.seats = { $gte: Number(seats)}
     }
     if (pricePerDay){
-        queryObject.pricePerDay = pricePerDay
+        queryObject.pricePerDay = { $lte: Number(pricePerDay)}
     }
     if (location){
         queryObject.location = location
@@ -33,12 +33,16 @@ const getAllCars = async(req,res)=>{
     queryObject.rentStatus = false
     let cars = carListings.find(queryObject)
     if (sort){
-        const sort_index = req.query.sort.split(",").join(' ')
-        console.log(sort_index)
+        const sort_index = sort.split(",").join(' ')
+        cars.sort(sort_index)
     }
     else{
         cars = cars.sort("createdAt")
     }
+    const page = Number(req.query.page) || 1
+    const limit = Number(req.query.limit) || 10
+    const skip = (page - 1) * limit
+    cars = cars.skip(skip).limit(limit)
     const products = await cars
     if (! products){
         res.status(StatusCodes.OK).json({message:"success but no ads", data:{}, status_code:StatusCodes.OK})
