@@ -34,6 +34,21 @@ const login = async (req,res)=>{
 
 }
 
+const authenticateQuestions = async(req,res) =>{
+     console.log(req.body)
+     const q1 = crypto.createHash('sha256').update(req.body.question1).digest('hex')
+     const q2 = crypto.createHash('sha256').update(req.body.question2).digest('hex')
+     console.log(q1, q2)
+     user_document = await User.findOne({email:req.body.email, question1:q1.toString(), question2:q2.toString()})
+     if (!user_document){
+          res.status(StatusCodes.NOT_FOUND).json({msg:"User Not Found or the questions were answered wrong",data:{},status_code:StatusCodes.NOT_FOUND})
+     }
+     else{
+          res.status(StatusCodes.OK).json({msg:"the question shave been correctly answers",data:user_document,status_code:StatusCodes.OK })
+     }
+     
+}
+
 
 const forgetPassword = async(req,res) =>{
           const user = await User.findOne({email:req.body.email})
@@ -74,4 +89,4 @@ const resetPassword = async(req,res) =>{
 }
 
 
-module.exports = {register, login, forgetPassword, resetPassword}
+module.exports = {register, login, forgetPassword, resetPassword, authenticateQuestions}
