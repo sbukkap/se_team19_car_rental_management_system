@@ -59,44 +59,35 @@ const deleteCar = async(req,res)=>{
 
 const searchCars = async (req, res) => {
     try {
-        const { carMake, carModel, year, transmission, fuelType, minSeats, maxSeats, minPricePerDay, maxPricePerDay, startDate, endDate, location } = req.query;
-        const searchQuery = {};
-
-        if (carMake) {
-            searchQuery.carMake = carMake;
+        const { query } = req.query;
+        console.log(query)
+        if (!query) {
+            return res.status(StatusCodes.BAD_REQUEST).json({ message: "Query parameter 'query' is required", data: {}, status_code: StatusCodes.BAD_REQUEST });
         }
 
-        if (carModel) {
-            searchQuery.carModel = carModel;
-        }
+        const searchFields = ['carMake', 'carModel', 'location']; 
+        const numericFields = ['year'];
 
-        if (year) {
-            searchQuery.year = year;
-        }
+        // const searchQuery = {
+        //     $or: searchFields.map(field => ({ [field]: { $regex: query, $options: 'i' } })) 
+        // };
 
-        if (transmission) {
-            searchQuery.transmission = transmission;
-        }
+        const searchQuery = {
+            $and: query.split(' ').map(word => (
+                {
+                    $or: searchFields.map(field => (
+                        { [field]: { $regex: new RegExp(word, 'i') } }
+                    ))
+                }
+            ))
+        };
 
-        if (fuelType) {
-            searchQuery.fuelType = fuelType;
-        }
 
-        // if (minSeats && maxSeats) {
-        //     searchQuery.seats = { $gte: minSeats, $lte: maxSeats };
-        // }
-
-        // if (minPricePerDay && maxPricePerDay) {
-        //     searchQuery.pricePerDay = { $gte: minPricePerDay, $lte: maxPricePerDay };
-        // }
-
-        // if (startDate && endDate) {
-        //     searchQuery.availableFrom = { $lte: new Date(startDate) };
-        //     searchQuery.availableTo = { $gte: new Date(endDate) };
-        // }
-
-        if (location) {
-            searchQuery.location = location;
+        const numericQuery = Number(query);
+        if (!isNaN(numericQuery)) {
+            numericFields.forEach(field => {
+                searchQuery.$or.push({ [field]: numericQuery }); // Numeric query for numeric fields
+            });
         }
 
         const cars = await carListings.find(searchQuery);
@@ -111,5 +102,6 @@ const searchCars = async (req, res) => {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Internal server error", data: {}, status_code: StatusCodes.INTERNAL_SERVER_ERROR });
     }
 };
+
 
 module.exports = { getAllCars, getAllOwnerCarsListings, createCar, getSingleCar, updateCar, deleteCar, searchCars };

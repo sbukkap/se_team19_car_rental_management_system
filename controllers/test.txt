@@ -1,0 +1,25 @@
+const searchCars = async (req, res) => {
+    try {
+        const { query } = req.query;
+
+        if (!query) {
+            return res.status(StatusCodes.BAD_REQUEST).json({ message: "Query parameter 'query' is required", data: {}, status_code: StatusCodes.BAD_REQUEST });
+        }
+
+        const searchFields = ['carMake', 'carModel', 'location']; 
+        const searchQuery = {
+            $or: searchFields.map(field => ({ [field]: { $regex: new RegExp(query, 'i') } })) 
+        };
+
+        const cars = await carListings.find(searchQuery);
+
+        if (cars.length === 0) {
+            return res.status(StatusCodes.NOT_FOUND).json({ message: "No cars found matching the search criteria", data: {}, status_code: StatusCodes.NOT_FOUND });
+        }
+
+        res.status(StatusCodes.OK).json({ message: "Success", data: cars, status_code: StatusCodes.OK });
+    } catch (error) {
+        console.error(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Internal server error", data: {}, status_code: StatusCodes.INTERNAL_SERVER_ERROR });
+    }
+};
