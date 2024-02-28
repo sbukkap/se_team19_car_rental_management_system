@@ -44,7 +44,7 @@ const authenticateQuestions = async(req,res) =>{
           res.status(StatusCodes.NOT_FOUND).json({msg:"User Not Found or the questions were answered wrong",data:{},status_code:StatusCodes.NOT_FOUND})
      }
      else{
-          res.status(StatusCodes.OK).json({msg:"the question shave been correctly answers",data:user_document,status_code:StatusCodes.OK })
+          res.status(StatusCodes.OK).json({msg:"the question shave been correctly answers",data:user_document.email,status_code:StatusCodes.OK })
      }
      
 }
