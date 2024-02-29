@@ -60,37 +60,42 @@ const deleteCar = async(req,res)=>{
 const searchCars = async (req, res) => {
     try {
         const { query } = req.query;
-        console.log(query)
         if (!query) {
             return res.status(StatusCodes.BAD_REQUEST).json({ message: "Query parameter 'query' is required", data: {}, status_code: StatusCodes.BAD_REQUEST });
         }
 
-        const searchFields = ['carMake', 'carModel', 'location']; 
+        const stringFields = ['carMake', 'carModel', 'location', 'transmission', 'fuelType']; 
         const numericFields = ['year'];
-
-        // const searchQuery = {
-        //     $or: searchFields.map(field => ({ [field]: { $regex: query, $options: 'i' } })) 
-        // };
-
+        const words = query.split(' ');
+        const stringQueries = words.filter(word => isNaN(parseFloat(word))); 
+        const numericQueries = words.filter(word => !isNaN(parseFloat(word))).map(parseFloat);
+        
+        // console.log(stringQueries)
         const searchQuery = {
-            $and: query.split(' ').map(word => (
+            $and: stringQueries.map(word => (
                 {
-                    $or: searchFields.map(field => (
+                    $or: stringFields.map(field => (
                         { [field]: { $regex: new RegExp(word, 'i') } }
                     ))
                 }
             ))
         };
-
-
-        const numericQuery = Number(query);
-        if (!isNaN(numericQuery)) {
-            numericFields.forEach(field => {
-                searchQuery.$or.push({ [field]: numericQuery }); // Numeric query for numeric fields
+        
+        let cars = await carListings.find(searchQuery);
+        // console.log(cars)
+        
+        // console.log(numericQueries)
+        if (numericQueries.length > 0) {
+            const filteredCars = cars.filter(car => {
+                return numericQueries.every(numericQuery => {
+                    return numericFields.some(field => {
+                        return car[field] === numericQuery;
+                    });
+                });
             });
-        }
 
-        const cars = await carListings.find(searchQuery);
+            cars = filteredCars; // Assign filteredCars to cars variable
+        }
 
         if (cars.length === 0) {
             return res.status(StatusCodes.NOT_FOUND).json({ message: "No cars found matching the search criteria", data: {}, status_code: StatusCodes.NOT_FOUND });
@@ -102,6 +107,5 @@ const searchCars = async (req, res) => {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Internal server error", data: {}, status_code: StatusCodes.INTERNAL_SERVER_ERROR });
     }
 };
-
 
 module.exports = { getAllCars, getAllOwnerCarsListings, createCar, getSingleCar, updateCar, deleteCar, searchCars };
