@@ -56,6 +56,11 @@ const listingSchema = new mongoose.Schema({
         type: Boolean,
         default: false
 
+    },
+    adminAuth:{
+        type: Boolean,
+        default: false
+
     }
 }, {timestamps: true});
 
