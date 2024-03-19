@@ -44,15 +44,15 @@ const listingSchema = new mongoose.Schema({
         required: true
     },
     location: {
-        type: {
-            type: String,
-            default: "Point"
-        },
-        coordinates: {
-            type: [Number],
-            required: true
-        }
-    },
+        lat:{
+        type: Number,
+        required: true
+        } ,
+        lng:{
+        type: Number,
+        required: true
+  }
+},
     ownerId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
