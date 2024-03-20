@@ -50,6 +50,12 @@ const listingSchema = new mongoose.Schema({
         } ,
         lng:{
         type: Number,
+        lat:{
+        type: Number,
+        required: true
+        } ,
+        lng:{
+        type: Number,
         required: true
   }
 },
@@ -61,6 +67,12 @@ const listingSchema = new mongoose.Schema({
     rentStatus: {
         type: Boolean,
         default: false
+
+    },
+    adminAuth:{
+        type: Boolean,
+        default: false
+
     }
 }, { timestamps: true });
 
