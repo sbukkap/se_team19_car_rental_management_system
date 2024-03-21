@@ -101,9 +101,9 @@ const deleteCar = async(req,res)=>{
 
 const getAllCarsAdmin = async(req,res)=>{
     /* api to get all car orders to show to renters  it has been updated to do serach operations too */
-    const authHeader = req.headers.authorization
-    const token = authHeader.split(' ')[1]
-    if (token == process.env.ADMIN_TOKEN){
+    // const authHeader = req.headers.authorization
+    // const token = authHeader.split(' ')[1]
+    // if (token == process.env.ADMIN_TOKEN){
     const {sort} = req.query
     queryObject = {}
     queryObject.rentStatus = false
@@ -126,15 +126,10 @@ const getAllCarsAdmin = async(req,res)=>{
     }
     res.status(StatusCodes.OK).json({message:"success", data:products, status_code:StatusCodes.OK})
 }
-else{
-    res.status(StatusCodes.UNAUTHORIZED).json({message:"your not an admin", data: {}, status_code:StatusCodes.UNAUTHORIZED})
-}
-}
-
 
 
 const updateAdminApprove = async(req,res)=>{
-    if (token == process.env.ADMIN_TOKEN){
+    
     car_id = req.params.id
     car_update = {"adminAuth":true}
     if (!req.body){
@@ -142,10 +137,6 @@ const updateAdminApprove = async(req,res)=>{
     }
     const car = await carListings.findOneAndUpdate({_id:car_id},car_update, {new:true, runValidators:true})
     res.status(StatusCodes.OK).json({message:"update Succesful", data: car, status_code:StatusCodes.OK})
-}
-else{
-    res.status(StatusCodes.UNAUTHORIZED).json({message:"your not an admin", data: {}, status_code:StatusCodes.UNAUTHORIZED})
-}
 }
 
 

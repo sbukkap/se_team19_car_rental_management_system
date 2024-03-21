@@ -23,12 +23,13 @@ app.use(express.json())
 
 
 const auth = require("./routes/login")
-
 app.use("/api/v1/auth",auth)
 
 const carsListings = require("./routes/carsListings")
 app.use("/api/v1/cars", authenticatUser, carsListings)
 
+const upload = require("./routes/upload")
+app.use("/api/v1/image", upload)
 
 
 app.use(notFound)
