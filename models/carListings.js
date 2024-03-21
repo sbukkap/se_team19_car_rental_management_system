@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require("mongoose")
 
 const listingSchema = new mongoose.Schema({
     carMake: {
@@ -50,21 +50,16 @@ const listingSchema = new mongoose.Schema({
         } ,
         lng:{
         type: Number,
-        lat:{
-        type: Number,
         required: true
-        } ,
-        lng:{
-        type: Number,
-        required: true
-  }
-},
+        } 
+
+    },
     ownerId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
     },
-    rentStatus: {
+    rentStatus:{
         type: Boolean,
         default: false
 
@@ -74,6 +69,6 @@ const listingSchema = new mongoose.Schema({
         default: false
 
     }
-}, { timestamps: true });
+}, {timestamps: true});
 
-module.exports = mongoose.model('CarListings', listingSchema);
+module.exports = mongoose.model('CarListings',listingSchema)
