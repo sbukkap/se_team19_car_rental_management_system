@@ -5,6 +5,7 @@ const {StatusCodes} = require('http-status-codes')
 
 const auth = async (req,res,next) =>{
     const authHeader = req.headers.authorization
+    console.log(authHeader)
     if (!authHeader || !authHeader.startsWith('Bearer ')){
         res.status(StatusCodes.UNAUTHORIZED).json({msg:"Invalid User",data:{},status_code:StatusCodes.UNAUTHORIZED})
     }
