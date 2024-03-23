@@ -68,6 +68,9 @@ const listingSchema = new mongoose.Schema({
         type: Boolean,
         default: false
 
+    },
+    image_url:{
+        type: Array,
     }
 }, {timestamps: true});
 
