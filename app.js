@@ -6,6 +6,7 @@ const app = express()
 const morgan = require('morgan')
 const notFound = require("./middleware/not-found")
 const errorHandlerMiddleware = require("./middleware/error-handlers")
+const expressFileUpload = require('express-fileupload')
 //connect to cloud storage
 const cloudinary = require("cloudinary").v2
 cloudinary.config({
@@ -20,6 +21,8 @@ const authenticatUser = require("./middleware/authentication")
 app.use(morgan("tiny"))
 //to access req.body during post request
 app.use(express.json())
+//package to acces the files
+app.use(expressFileUpload({useTempFiles:true}))
 
 
 const auth = require("./routes/login")
