@@ -34,6 +34,9 @@ app.use("/api/v1/cars", authenticatUser, carsListings)
 const upload = require("./routes/upload")
 app.use("/api/v1/image", upload)
 
+const rent = require("./routes/renting")
+app.use("/api/v1/rent",authenticatUser, rent)
+
 
 app.use(notFound)
 app.use(errorHandlerMiddleware)
