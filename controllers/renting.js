@@ -9,8 +9,9 @@ const rentItem = async(req,res)=>{
     req.body.user_id = user_id
     const rentItem = await rentItems.create(req.body)
     res.status(StatusCodes.OK).json({message:"item rented", data:{rentItem}, status_code:StatusCodes.OK})
-
 }
+
+
 
 
 module.exports = {rentItem}
