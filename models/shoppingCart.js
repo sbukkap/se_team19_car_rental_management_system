@@ -1,6 +1,6 @@
 const mongoose = require("mongoose")
 
-const rentSchema = new mongoose.Schema({
+const shoppingCart = new mongoose.Schema({
     user_id: {
         type: String,
         required: true
@@ -13,7 +13,10 @@ const rentSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    isDeleted: {
+        type: Boolean,
+    },
     
 }, {timestamps: true});
 
-module.exports = mongoose.model('rentItems',rentSchema)
+module.exports = mongoose.model('shoppingCart',shoppingCart)

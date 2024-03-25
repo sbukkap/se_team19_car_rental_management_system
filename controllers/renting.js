@@ -5,6 +5,7 @@ const stripe = require('stripe')(process.env.STRIPE_KEY)
 
 const rentItem = async(req,res)=>{
     const owner_id = await carListings.findOne({_id:req.body.item_id})
+    item_id  = req.body.item_id
     req.body.owner_id = owner_id.ownerId.toString()
     const user_id = req.user.userID
     req.body.user_id = user_id
