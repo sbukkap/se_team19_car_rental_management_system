@@ -38,6 +38,10 @@ const rent = require("./routes/renting")
 app.use("/api/v1/rent",authenticatUser, rent)
 
 
+const shoppingCart = require("./routes/shoppingCart")
+app.use("/api/v1/shoppingCart/", shoppingCart)
+
+
 app.use(notFound)
 app.use(errorHandlerMiddleware)
 const port = process.env.PORT || 3000
