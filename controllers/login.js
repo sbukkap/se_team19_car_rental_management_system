@@ -89,4 +89,48 @@ const resetPassword = async(req,res) =>{
 }
 
 
-module.exports = {register, login, forgetPassword, resetPassword, authenticateQuestions}
+const google = async(req,resp) => {
+     try {
+          const obtainedUser = await User.findOne({email:req.body.email});
+
+          if(obtainedUser) {
+               const token = obtainedUser.createJWT();
+               resp.status(StatusCodes.OK).cookie('token',token,{ httpOnly:true }).json({message:"login Succesful",data:{username:obtainedUser.username,token},status_code:StatusCodes.OK})
+          }
+
+          else {
+               let username='';
+               let isUsernameUnique = false;
+
+               while(!isUsernameUnique) {
+                    username = `user${Math.floor(Math.random() * 10000)}`;
+                    let existUsername = await User.findOne({username:username});
+
+                    if(!existUsername) {
+                         isUsernameUnique = true;
+                    }
+               }
+               const randomPw = Math.random().toString(36).slice(-8);
+               const newlyRegUser = new User ({
+                    username: username,
+                    email: req.body.email,
+                    password: randomPw,
+                    avatar: req.body.photo,
+               });
+               await newlyRegUser.save();
+               const token = newlyRegUser.createJWT();
+               const {password:x,...otherData} = newlyRegUser._doc;
+
+               resp.cookie('access_token',token,{httpOnly:true})
+               .status(StatusCodes.OK)
+               .json(otherData);               
+          }
+     }
+
+     catch(err) {
+          console.log(err);
+          resp.status(StatusCodes.UNAUTHORIZED).json({message:"Invalid login",data:{},status_code:StatusCodes.UNAUTHORIZED})
+     }
+};
+
+module.exports = {register, login, forgetPassword, resetPassword,authenticateQuestions ,google}
