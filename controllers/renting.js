@@ -14,14 +14,14 @@ const rentItem = async(req,res)=>{
 }
 
 const stripePayment = async(req, res) =>{
-    const {} = req.body;
+    // const {} = req.body;
 
-    const calculateOrderAmount = () =>{
-        // add code to do payment
-    }
+    // const calculateOrderAmount = () =>{
+    //     // add code to do payment
+    // }
 
     const paymentIntent = await stripe.paymentIntent.create({
-        amount:calculateOrderAmount(),
+        amount:3,
         currency: 'usd'
     })
     res.status(StatusCodes.OK).json({message:"success", data:{clientSecret:paymentIntent.client_secret}, status_code:StatusCodes.OK})
