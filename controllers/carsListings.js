@@ -157,9 +157,6 @@ const searchCars = async (req, res) => {
     }
 };
 
-module.exports = { getAllCars, getAllOwnerCarsListings, createCar, getSingleCar, updateCar, deleteCar, searchCars };
-
-
 
 const getAllCarsAdmin = async(req,res)=>{
     /* api to get all car orders to show to renters  it has been updated to do serach operations too */
@@ -202,4 +199,4 @@ const updateAdminApprove = async(req,res)=>{
 }
 
 
-module.exports = {getAllCars, getAllOwnerCarsListings, createCar, getSingleCar, updateCar, deleteCar, getAllCarsAdmin, updateAdminApprove}
+module.exports = {getAllCars, getAllOwnerCarsListings, createCar, getSingleCar, updateCar, deleteCar, getAllCarsAdmin, updateAdminApprove, searchCars}
