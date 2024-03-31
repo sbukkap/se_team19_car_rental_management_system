@@ -195,7 +195,7 @@ const filterCars = async (req, res) => {
         if (carModel) filters.carModel = carModel;
         if (minYear && maxYear) filters.year = { $gte: parseInt(minYear), $lte: parseInt(maxYear) };
         if (minMileage && maxMileage) filters.mileage = { $gte: parseInt(minMileage), $lte: parseInt(maxMileage) };
-        if (transmission) filters.transmission = transmission;
+        if (transmission) filters.transmission = transmission;  
         if (fuelType) filters.fuelType = fuelType;
         if (minSeats && maxSeats) filters.seats = { $gte: parseInt(minSeats), $lte: parseInt(maxSeats) };
         if (minPricePerDay && maxPricePerDay) filters.pricePerDay = { $gte: parseInt(minPricePerDay), $lte: parseInt(maxPricePerDay) };
