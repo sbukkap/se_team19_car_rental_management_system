@@ -9,7 +9,6 @@ const register = async (req,res)=>{
      res.status(StatusCodes.OK).cookie('token',token,{ maxAge: 900000, httpOnly: true }).json({message:"created User",data:{username:user.username,token},status_code:StatusCodes.CREATED})
 }
 
-
 const login = async (req,res)=>{
      try {
           const {email,password} = req.body
