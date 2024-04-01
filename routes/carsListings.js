@@ -6,6 +6,10 @@ router.get("/getAllCarsListings",getAllCars)
 
 router.get("/getAllOwnerCarsListings",getAllOwnerCarsListings)
 
+router.get("/searchCars", searchCars)
+
+router.get("/filterCars", filterCars)
+
 router.post("/createCarListings",createCar)
 
 router.get("/getSingleCarListings/:id",getSingleCar)

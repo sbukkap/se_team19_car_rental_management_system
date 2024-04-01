@@ -99,59 +99,89 @@ const deleteCar = async(req,res)=>{
 
 const searchCars = async (req, res) => {
     try {
-        // Extract search query parameters from the request
-        const { carMake, carModel, year, transmission, fuelType, minSeats, maxSeats, minPricePerDay, maxPricePerDay, startDate, endDate, location } = req.query;
-
-        // Construct the search query based on the provided parameters
-        const searchQuery = {};
-
-        if (carMake) {
-            searchQuery.carMake = carMake;
+        const { query } = req.query;
+        if (!query) {
+            return res.status(StatusCodes.BAD_REQUEST).json({ message: "Query parameter 'query' is required", data: {}, status_code: StatusCodes.BAD_REQUEST });
         }
 
-        if (carModel) {
-            searchQuery.carModel = carModel;
+        const stringFields = ['carMake', 'carModel', 'location', 'transmission', 'fuelType']; 
+        const numericFields = ['year', 'mileage', 'seats', 'pricePerDay'];
+        const words = query.split(' ');
+        const stringQueries = words.filter(word => isNaN(parseFloat(word))); 
+        const numericQueries = words.filter(word => !isNaN(parseFloat(word))).map(parseFloat);
+        // console.log(stringQueries)
+        // console.log(numericQueries)
+
+        if (stringQueries.length > 0) {
+            searchQuery = {
+                $and: stringQueries.map(word => (
+                    {
+                        $or: stringFields.map(field => (
+                            { [field]: { $regex: new RegExp(word, 'i') } }
+                        ))
+                    }
+                ))
+            };
+            console.log('yes')
+            var cars = await carListings.find(searchQuery);
+        }
+        else {
+            console.log('yes')
+            cars = await carListings.find({rentStatus:false}).sort('createdAt')
         }
 
-        if (year) {
-            searchQuery.year = year;
-        }
+        
+        // console.log(cars)
+        
+        // console.log(numericQueries)
+        if (numericQueries.length > 0) {
+            const filteredCars = cars.filter(car => {
+                return numericQueries.every(numericQuery => {
+                    return numericFields.some(field => {
+                        return car[field] === numericQuery;
+                    });
+                });
+            });
 
-        if (transmission) {
-            searchQuery.transmission = transmission;
+            cars = filteredCars; 
         }
-
-        if (fuelType) {
-            searchQuery.fuelType = fuelType;
-        }
-
-        if (minSeats && maxSeats) {
-            searchQuery.seats = { $gte: minSeats, $lte: maxSeats };
-        }
-
-        if (minPricePerDay && maxPricePerDay) {
-            searchQuery.pricePerDay = { $gte: minPricePerDay, $lte: maxPricePerDay };
-        }
-
-        if (startDate && endDate) {
-            searchQuery.availableFrom = { $lte: new Date(startDate) };
-            searchQuery.availableTo = { $gte: new Date(endDate) };
-        }
-
-        if (location) {
-            searchQuery.location = location;
-        }
-
-        const cars = await carListings.find(searchQuery);
 
         if (cars.length === 0) {
             return res.status(StatusCodes.NOT_FOUND).json({ message: "No cars found matching the search criteria", data: {}, status_code: StatusCodes.NOT_FOUND });
         }
 
-        // Return the search results
         res.status(StatusCodes.OK).json({ message: "Success", data: cars, status_code: StatusCodes.OK });
     } catch (error) {
-        // Handle errors
+        console.error(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Internal server error", data: {}, status_code: StatusCodes.INTERNAL_SERVER_ERROR });
+    }
+};
+
+const filterCars = async (req, res) => {
+    try {
+        const { carMake, carModel, minYear, maxYear, minMileage, maxMileage, transmission, fuelType, minSeats, maxSeats, minPricePerDay, maxPricePerDay, availableFrom, availableTo } = req.query;
+
+        const filters = {};
+
+        if (carMake) filters.carMake = carMake;
+        if (carModel) filters.carModel = carModel;
+        if (minYear && maxYear) filters.year = { $gte: parseInt(minYear), $lte: parseInt(maxYear) };
+        if (minMileage && maxMileage) filters.mileage = { $gte: parseInt(minMileage), $lte: parseInt(maxMileage) };
+        if (transmission) filters.transmission = transmission;  
+        if (fuelType) filters.fuelType = fuelType;
+        if (minSeats && maxSeats) filters.seats = { $gte: parseInt(minSeats), $lte: parseInt(maxSeats) };
+        if (minPricePerDay && maxPricePerDay) filters.pricePerDay = { $gte: parseInt(minPricePerDay), $lte: parseInt(maxPricePerDay) };
+        if (availableFrom) filters.availableFrom = { $gte: new Date(availableFrom) };
+        if (availableTo) filters.availableTo = { $lte: new Date(availableTo) };
+        // console.log(filters)
+        const cars = await carListings.find(filters);
+
+        if (!cars || cars.length === 0) {
+            return res.status(StatusCodes.NOT_FOUND).json({ message: "No cars found matching the search criteria", data: {}, status_code: StatusCodes.NOT_FOUND });
+        }
+
+        res.status(StatusCodes.OK).json({ message: "Success", data: cars, status_code: StatusCodes.OK });
+    } catch (error) {
         console.error(error);
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Internal server error", data: {}, status_code: StatusCodes.INTERNAL_SERVER_ERROR });
     }
@@ -199,4 +229,4 @@ const updateAdminApprove = async(req,res)=>{
 }
 
 
-module.exports = {getAllCars, getAllOwnerCarsListings, createCar, getSingleCar, updateCar, deleteCar, getAllCarsAdmin, updateAdminApprove, searchCars}
+module.exports = {getAllCars, getAllOwnerCarsListings, createCar, getSingleCar, updateCar, deleteCar, getAllCarsAdmin, updateAdminApprove, searchCars, filterCars}
