@@ -1,4 +1,4 @@
-const {getAllCars, getAllOwnerCarsListings, createCar, getSingleCar, updateCar, deleteCar, getAllCarsAdmin, updateAdminApprove} = require("../controllers/carsListings")
+const {getAllCars, getAllOwnerCarsListings, createCar, getSingleCar, updateCar, deleteCar, getAllCarsAdmin, updateAdminApprove, searchCars, filterCars} = require("../controllers/carsListings")
 const express = require("express")
 const router = express.Router()
 
