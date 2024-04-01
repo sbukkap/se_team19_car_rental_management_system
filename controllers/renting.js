@@ -21,7 +21,7 @@ const stripePayment = async(req, res) =>{
     // }
 
     const paymentIntent = await stripe.paymentIntents.create({
-        amount:3,
+        amount:3000,
         currency: 'usd'
     })
     res.status(StatusCodes.OK).json({message:"success", data:{clientSecret:paymentIntent.client_secret}, status_code:StatusCodes.OK})

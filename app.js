@@ -1,5 +1,5 @@
 //accessing env variables
-require("dotenv").config({path:'dev.env'})
+require("dotenv").config()
 require("express-async-errors")
 const express = require("express")
 const app = express()
@@ -16,7 +16,7 @@ cloudinary.config({
 })
 //connect to MongoDB
 const connectDB = require("./db/connect")
-const authenticatUser = require("./middleware/authentication")
+const authenticateUser = require("./middleware/authentication")
 //middleware to view request details
 app.use(morgan("tiny"))
 //to access req.body during post request
@@ -29,17 +29,17 @@ const auth = require("./routes/login")
 app.use("/api/v1/auth",auth)
 
 const carsListings = require("./routes/carsListings")
-app.use("/api/v1/cars", authenticatUser, carsListings)
+app.use("/api/v1/cars", authenticateUser, carsListings)
 
 const upload = require("./routes/upload")
-app.use("/api/v1/image", upload)
+app.use("/api/v1/image", authenticateUser,upload)
 
 const rent = require("./routes/renting")
-app.use("/api/v1/rent",authenticatUser, rent)
+app.use("/api/v1/rent", authenticateUser, rent)
 
 
 const shoppingCart = require("./routes/shoppingCart")
-app.use("/api/v1/shoppingCart/", shoppingCart)
+app.use("/api/v1/shoppingCart/", authenticateUser, shoppingCart)
 
 
 app.use(notFound)
@@ -48,7 +48,6 @@ const port = process.env.PORT || 3000
 
 const start = async ()=>{
     try{
-        // console.log(process.env)
         await connectDB(process.env.MONGO_URI)
         console.log("MongoDB is up 🤖")
         app.listen(port,()=>{
