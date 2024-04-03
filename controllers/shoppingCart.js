@@ -4,9 +4,14 @@ const shoppingCart = require("../models/shoppingCart")
 
 
 
-const shoppingCartCount = async(req, res) =>{
+const isShoppingCartPresent = async(req, res) =>{
+    const user = req.params.userId
+    const shoppingCartUser = await shoppingCart.find({user_id:user, isDeleted:true})
+    if (shoppingCartUser){
+        res.status(StatusCodes.OK).json({message:"No shopping cart", data: {shoppingCart:false}, status_code:StatusCodes.OK})
 
-    res.send("number of elements")
+    }
+    res.status(StatusCodes.OK).json({message:"shopping cart present", data: {shoppingCart:true}, status_code:StatusCodes.OK})
 
 }
 
@@ -43,4 +48,4 @@ const deleteItemShoppingcart = async(req, res)=>{
 }
 
 
-module.exports = {shoppingCartCount, createShoppingcart, get_Shoppingcart, updateShoppingcart, deleteItemShoppingcart}
+module.exports = {isShoppingCartPresent , createShoppingcart, get_Shoppingcart, updateShoppingcart, deleteItemShoppingcart}
