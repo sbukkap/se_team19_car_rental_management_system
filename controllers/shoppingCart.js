@@ -1,9 +1,6 @@
 const {StatusCodes} = require("http-status-codes")
 const shoppingCart = require("../models/shoppingCart")
 
-
-
-
 const isShoppingCartPresent = async(req, res) =>{
     const user = req.params.userId
     const shoppingCartUser = await shoppingCart.find({user_id:user, isDeleted:true})
