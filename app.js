@@ -39,7 +39,11 @@ app.use("/api/v1/rent", authenticateUser, rent)
 
 
 const shoppingCart = require("./routes/shoppingCart")
-app.use("/api/v1/shoppingCart/", authenticateUser, shoppingCart)
+app.use("/api/v1/shoppingCart", authenticateUser, shoppingCart)
+
+
+const ticketSystem = require("./routes/ticketingSystem")
+app.use("/api/v1/ticketingSystem/", authenticateUser, ticketSystem)
 
 
 app.use(notFound)
