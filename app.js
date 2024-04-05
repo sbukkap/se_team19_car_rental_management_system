@@ -29,10 +29,10 @@ const auth = require("./routes/login")
 app.use("/api/v1/auth",auth)
 
 const carsListings = require("./routes/carsListings")
-app.use("/api/v1/cars", authenticateUser, carsListings)
+app.use("/api/v1/cars", carsListings)
 
 const upload = require("./routes/upload")
-app.use("/api/v1/image", authenticateUser,upload)
+app.use("/api/v1/image", authenticateUser, upload)
 
 const rent = require("./routes/renting")
 app.use("/api/v1/rent", authenticateUser, rent)
