@@ -21,4 +21,26 @@ const getAllItemReviews = async(req, res)=>{
     res.status(StatusCodes.OK).json({message:"success", data:reviews, status_code:StatusCodes.OK})
 }
 
-module.exports = {createReview, getAllItemReviews}
+const getItemRatingDetails = async(req,res)=>{
+    const reviews = await review.find({item_id:req.params.id})
+    let avg = 0
+    let freq = {}
+    for(let i = 0;i<reviews.length;i++){
+        if (!freq[reviews[i].ratings]){
+            freq[reviews[i].ratings] = 1
+        }
+        else{
+        freq[reviews[i].ratings]+=1
+        }
+        avg+=reviews[i].ratings
+    }
+    if (!reviews){
+        res.status(StatusCodes.OK).json({message:"no ratings for this item", data:{}, status_code:StatusCodes.OK})
+    }
+    data = {}
+    data.avg_ratings = avg/reviews.length
+    data.rating_freq = freq
+    res.status(StatusCodes.OK).json({message:"success", data:data, status_code:StatusCodes.OK})
+
+}
+module.exports = {createReview, getAllItemReviews, getItemRatingDetails}

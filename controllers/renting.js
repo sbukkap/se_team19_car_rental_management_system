@@ -51,6 +51,4 @@ const sendPaymentEmail = async(req,res)=>{
 }
 
 
-
-
 module.exports = {rentItem, stripePayment,sendPaymentEmail}
