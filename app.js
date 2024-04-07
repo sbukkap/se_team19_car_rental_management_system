@@ -45,6 +45,8 @@ app.use("/api/v1/shoppingCart", authenticateUser, shoppingCart)
 const ticketSystem = require("./routes/ticketingSystem")
 app.use("/api/v1/ticketingSystem/", authenticateUser, ticketSystem)
 
+const reviews = require("./routes/review")
+app.use("/api/v1/reviews/", authenticateUser, reviews)
 
 app.use(notFound)
 app.use(errorHandlerMiddleware)
