@@ -1,5 +1,6 @@
 const ticketsSchema = require("../models/ticketingSystem")
 const carListings = require("../models/carListings")
+const users = require("../models/login")
 const {StatusCodes} = require("http-status-codes")
 
 
@@ -53,4 +54,41 @@ const updateComplaintResolveStatus = async(req, res)=>{
     res.status(StatusCodes.OK).json({message:"update Succesful", data: statusUpdate, status_code:StatusCodes.OK})
 }
 
-module.exports = {launchComplaint, getComplaintsOnMyProduct, getMyComplaints, updateComplaintResolveStatus, adminGetAllComplaints}
+const customersComplaintTheMost = async(req,res)=>{
+    const tickets = await ticketsSchema.find({})
+    console.log(tickets)
+    let freq = {}
+    for (let i = 0; i < tickets.length; i++){
+        if (!freq[tickets[i].user_id]){
+            freq[tickets[i].user_id] = 1
+        }
+        else{
+        freq[tickets[i].user_id]+=1
+        }
+    }
+    const largestValue = Math.max(...Object.values(freq));
+    const largestObject = Object.entries(freq).find(([key, value]) => value === largestValue);
+    const user_details = await users.findOne({_id:largestObject[0]})
+    const responseObject = {username:user_details.username, email:user_details.email, complaint_frequency: largestObject[1]}
+    res.status(StatusCodes.OK).json({message:"success", data:responseObject , status_code:StatusCodes.OK})
+}
+
+const ownerComplaintTheMost = async(req,res)=>{
+    const tickets = await ticketsSchema.find({})
+    console.log(tickets)
+    let freq = {}
+    for (let i = 0; i < tickets.length; i++){
+        if (!freq[tickets[i].itemOwnerId]){
+            freq[tickets[i].itemOwnerId] = 1
+        }
+        else{
+        freq[tickets[i].itemOwnerId]+=1
+        }
+    }
+    const largestValue = Math.max(...Object.values(freq));
+    const largestObject = Object.entries(freq).find(([key, value]) => value === largestValue);
+    const user_details = await users.findOne({_id:largestObject[0]})
+    const responseObject = {username:user_details.username, email:user_details.email, complaint_frequency: largestObject[1]}
+    res.status(StatusCodes.OK).json({message:"success", data:responseObject , status_code:StatusCodes.OK})
+}
+module.exports = {launchComplaint, getComplaintsOnMyProduct, getMyComplaints, updateComplaintResolveStatus, adminGetAllComplaints, customersComplaintTheMost, ownerComplaintTheMost}
