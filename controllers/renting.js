@@ -6,11 +6,11 @@ const stripe = require('stripe')(process.env.STRIPE_KEY)
 
 const rentItem = async(req,res)=>{
     const owner_id = await carListings.findOne({_id:req.body.item_id})
-    item_id  = req.body.item_id
     req.body.owner_id = owner_id.ownerId.toString()
     const user_id = req.user.userID
     req.body.user_id = user_id
     const rentItem = await rentItems.create(req.body)
+    const update = await carListings.findOneAndUpdate({_id:req.body.item_id},{rentStatus:true},{new:true, runValidators:true})
     res.status(StatusCodes.OK).json({message:"item rented", data:{rentItem}, status_code:StatusCodes.OK})
 }
 
@@ -51,4 +51,47 @@ const sendPaymentEmail = async(req,res)=>{
 }
 
 
-module.exports = {rentItem, stripePayment,sendPaymentEmail}
+
+
+const mostRentedItems = async(req,res)=>{
+    const items = await rentItems.find({})
+    let freq = {}
+    for (let i = 0; i < items.length; i++){
+        if (!freq[items[i].item_id]){
+            freq[items[i].item_id] = 1
+        }
+        else{
+        freq[items[i].item_id]+=1
+        }
+    }
+    const largestValue = Math.max(...Object.values(freq));
+    const largestObject = Object.entries(freq).find(([key, value]) => value === largestValue);
+    const itemDetails = await carListings.findOne({_id:largestObject[0]})
+    const responseObject = {itemdetails:itemDetails, item_frequency: largestObject[1]}
+    res.status(StatusCodes.OK).json({message:"success", data:responseObject , status_code:StatusCodes.OK})
+}
+
+
+const mostRentedItemsForUser = async(req,res)=>{
+    console.log(req.user.userID)
+    const items = await rentItems.find({owner_id:req.user.userID})
+    let freq = {}
+    for (let i = 0; i < items.length; i++){
+        if (!freq[items[i].item_id]){
+            freq[items[i].item_id] = 1
+        }
+        else{
+        freq[items[i].item_id]+=1
+        }
+    }
+    const largestValue = Math.max(...Object.values(freq));
+    const largestObject = Object.entries(freq).find(([key, value]) => value === largestValue);
+    const itemDetails = await carListings.findOne({_id:largestObject[0]})
+    const responseObject = {itemdetails:itemDetails, item_frequency: largestObject[1]}
+    res.status(StatusCodes.OK).json({message:"success", data:responseObject , status_code:StatusCodes.OK})
+}
+
+
+
+
+module.exports = {rentItem, stripePayment,sendPaymentEmail, mostRentedItems, mostRentedItemsForUser}

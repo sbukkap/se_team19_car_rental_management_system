@@ -91,4 +91,5 @@ const ownerComplaintTheMost = async(req,res)=>{
     const responseObject = {username:user_details.username, email:user_details.email, complaint_frequency: largestObject[1]}
     res.status(StatusCodes.OK).json({message:"success", data:responseObject , status_code:StatusCodes.OK})
 }
+
 module.exports = {launchComplaint, getComplaintsOnMyProduct, getMyComplaints, updateComplaintResolveStatus, adminGetAllComplaints, customersComplaintTheMost, ownerComplaintTheMost}
