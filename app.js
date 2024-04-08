@@ -29,18 +29,24 @@ const auth = require("./routes/login")
 app.use("/api/v1/auth",auth)
 
 const carsListings = require("./routes/carsListings")
-app.use("/api/v1/cars", authenticateUser, carsListings)
+app.use("/api/v1/cars", carsListings)
 
 const upload = require("./routes/upload")
-app.use("/api/v1/image", authenticateUser,upload)
+app.use("/api/v1/image", authenticateUser, upload)
 
 const rent = require("./routes/renting")
 app.use("/api/v1/rent", authenticateUser, rent)
 
 
 const shoppingCart = require("./routes/shoppingCart")
-app.use("/api/v1/shoppingCart/", authenticateUser, shoppingCart)
+app.use("/api/v1/shoppingCart", authenticateUser, shoppingCart)
 
+
+const ticketSystem = require("./routes/ticketingSystem")
+app.use("/api/v1/ticketingSystem/", authenticateUser, ticketSystem)
+
+const reviews = require("./routes/review")
+app.use("/api/v1/reviews/", authenticateUser, reviews)
 
 app.use(notFound)
 app.use(errorHandlerMiddleware)
