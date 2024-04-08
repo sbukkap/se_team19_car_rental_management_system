@@ -5,13 +5,12 @@ const shoppingCart = new mongoose.Schema({
         type: String,
         required: true
     },
-    items: {
-        type: Object,
-        required: true
-    },
+
+    items: { type: Array, default: [], required: true }, // Ensure items field is defined as an array
+
     Total: {
         type: String,
-        required: true
+        // required: true
     },
     isDeleted: {
         type: Boolean,
