@@ -17,6 +17,8 @@ const isShoppingCartPresent = async(req, res) =>{
 
 
 const createShoppingcart = async(req, res)=>{
+    const user = req.user.userId
+    req.body.user_id = user
     const shoppingCart_doc = await shoppingCart.create(req.body)
     res.status(StatusCodes.CREATED).json({message:"success", data: shoppingCart_doc, status_code:StatusCodes.CREATED})
 }
@@ -47,5 +49,10 @@ const deleteItemShoppingcart = async(req, res)=>{
     res.status(StatusCodes.OK).json({message:"Shopping cart deleted", data: shoppingCartDelete, status_code:StatusCodes.OK})
 }
 
+const recommendations = async(req, res)=>{
+    const user_id = req.user.userId
+    const shopping_cart = await shoppingCart.findOne({})
+}
 
-module.exports = {isShoppingCartPresent , createShoppingcart, get_Shoppingcart, updateShoppingcart, deleteItemShoppingcart}
+
+module.exports = {isShoppingCartPresent , createShoppingcart, get_Shoppingcart, updateShoppingcart, deleteItemShoppingcart, recommendations}
