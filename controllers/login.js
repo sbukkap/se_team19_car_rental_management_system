@@ -226,6 +226,19 @@ const google = async (req, resp) => {
   }
 };
 
+
+const deleteUserForTest = async(req, res) =>{
+  const result = await User.findOneAndDelete(req.body)
+  res
+      .status(StatusCodes.OK)
+      .json({
+        message: "Deleted User",
+        data: {result},
+        status_code: StatusCodes.OK,
+      });
+
+}
+
 module.exports = {
   register,
   login,
@@ -234,4 +247,5 @@ module.exports = {
   authenticateQuestions,
   google,
   signOut,
+  deleteUserForTest
 };

@@ -39,5 +39,13 @@ describe("Login Routes", () => {
     // Add more assertions as needed
   });
 
+  it("should delete the test user", async () => {
+    const credentials = {email: "testuser@gmail.com"};
+    const response = await supertest(app)
+      .delete("/api/v1/auth/deleteUserForTest")
+      .send(credentials);
+    expect(response.status).toBe(200);
+    // Add more assertions as needed
+  });
   // Add tests for other routes similarly
 });
