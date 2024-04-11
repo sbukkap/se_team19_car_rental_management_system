@@ -14,6 +14,7 @@ const shoppingCart = new mongoose.Schema({
     },
     isDeleted: {
         type: Boolean,
+        default: false
     },
     
 }, {timestamps: true});

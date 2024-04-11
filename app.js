@@ -48,6 +48,9 @@ app.use("/api/v1/ticketingSystem/", authenticateUser, ticketSystem)
 const reviews = require("./routes/review")
 app.use("/api/v1/reviews/", authenticateUser, reviews)
 
+const chatbot = require("./routes/chabot")
+app.use("/api/v1/chatbot/", authenticateUser, chatbot)
+
 app.use(notFound)
 app.use(errorHandlerMiddleware)
 const port = process.env.PORT || 3000

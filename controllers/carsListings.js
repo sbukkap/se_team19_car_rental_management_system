@@ -219,9 +219,8 @@ const getAllCarsAdmin = async(req,res)=>{
 
 
 const updateAdminApprove = async(req,res)=>{
-    
-    car_id = req.params.id
-    car_update = {"adminAuth":true}
+    const car_id = req.params.id
+    const car_update = {"adminAuth":true}
     if (!req.body){
         res.status(StatusCodes.BAD_REQUEST).json({message:"provide valid update paramerters", data: car, status_code:StatusCodes.BAD_REQUEST})
     }
