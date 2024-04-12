@@ -1,5 +1,6 @@
 const carListings = require("../models/carListings")
 const rentItems = require("../models/renting")
+const shoppingCart = require("../models/shoppingCart")
 const login = require("../models/login")
 const {StatusCodes} = require("http-status-codes")
 const stripe = require('stripe')(process.env.STRIPE_KEY)
@@ -15,12 +16,9 @@ const rentItem = async(req,res)=>{
 }
 
 const stripePayment = async(req, res) =>{
-    // const {} = req.body;
-
-    // const calculateOrderAmount = () =>{
-    //     // add code to do payment
-    // }
-    const total = 3000
+    const request = req.body.items
+    console.log(request)
+    const total = Number(request.cost) *  Number(request.duration)
     const paymentIntent = await stripe.paymentIntents.create({
         amount:total,
         currency: 'usd'
@@ -92,6 +90,22 @@ const mostRentedItemsForUser = async(req,res)=>{
 }
 
 
+
+const rentItem_method = async(item_id,user_id, payload )=>{
+    const owner_id = await carListings.findOne({_id:item_id})
+    payload.owner_id = owner_id.ownerId.toString()
+    payload.user_id = user_id
+    const rentItem = await rentItems.create(req.body)
+    const update = await carListings.findOneAndUpdate({_id:req.body.item_id},{rentStatus:true},{new:true, runValidators:true})
+}
+
+const rentItemsShoppingCart = async(req, res)=>{
+    const shopping_cart = await shoppingCart.findOne({_id:req.params.id})
+    for (let i =0; i<shopping_cart.length; i++){
+        rentItem_method(shopping_cart[i]._id, user_id, )
+
+    }
+}
 
 
 module.exports = {rentItem, stripePayment,sendPaymentEmail, mostRentedItems, mostRentedItemsForUser}
