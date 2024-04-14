@@ -16,21 +16,31 @@ const rentItem = async(req,res)=>{
 }
 
 const stripePayment = async(req, res) =>{
-    const request = req.body.items
+    const request = req.body
     console.log(request)
     const total = Number(request.cost) *  Number(request.duration)
-    const paymentIntent = await stripe.paymentIntents.create({
-        amount:total,
-        currency: 'usd'
-    })
+    // const paymentIntent = await stripe.paymentIntents.create({
+    //     amount:total,
+    //     currency: 'usd'
+    // })
     const session = await stripe.checkout.sessions.create({
-        payment_method_types:["card"],
-        mode:"payment",
-        sucess_url:"http://localhost:3000/paymentSuccess",
-        cancel_url:"http://localhost:3000/paymentCancel"
-    })
+            payment_method_types: ["card"],
+            line_items: [{
+                price_data: {
+                    currency: "usd",
+                    product_data:{
+                        name:request.item_id
+                    },
+                    unit_amount: Math.round(total * 100), // amount in cents
+              },
+                quantity: 1, // assuming one unit for now
+            }],
+            mode: "payment",
+            success_url: "http://localhost:3000/paymentSuccess",
+            cancel_url: "http://localhost:3000/paymentCancel"
+        });
           
-    res.status(StatusCodes.OK).json({message:"success", data:{clientSecret:paymentIntent.client_secret, id:session.id}, status_code:StatusCodes.OK})
+    res.status(StatusCodes.OK).json({message:"success", data:{id:session.id}, status_code:StatusCodes.OK})
 
 
 }
