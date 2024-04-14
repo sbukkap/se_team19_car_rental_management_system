@@ -23,8 +23,15 @@ const stripePayment = async(req, res) =>{
         amount:total,
         currency: 'usd'
     })
+    const session = await stripe.checkout.sessions.create({
+        payment_method_types:["card"],
+        line_items:lineItems,
+        mode:"payment",
+        sucess_url:"http://localhost:3000/paymentSuccess",
+        cancel_url:"http://localhost:3000/paymentCancel"
+    })
           
-    res.status(StatusCodes.OK).json({message:"success", data:{clientSecret:paymentIntent.client_secret}, status_code:StatusCodes.OK})
+    res.status(StatusCodes.OK).json({message:"success", data:{clientSecret:paymentIntent.client_secret, id:session.id}, status_code:StatusCodes.OK})
 
 
 }
