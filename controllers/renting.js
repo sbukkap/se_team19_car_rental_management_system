@@ -107,21 +107,18 @@ const mostRentedItemsForUser = async(req,res)=>{
 
 
 
-const rentItem_method = async(item_id,user_id, payload )=>{
-    const owner_id = await carListings.findOne({_id:item_id})
-    payload.owner_id = owner_id.ownerId.toString()
-    payload.user_id = user_id
-    const rentItem = await rentItems.create(req.body)
-    const update = await carListings.findOneAndUpdate({_id:req.body.item_id},{rentStatus:true},{new:true, runValidators:true})
-}
-
-const rentItemsShoppingCart = async(req, res)=>{
-    const shopping_cart = await shoppingCart.findOne({_id:req.params.id})
-    for (let i =0; i<shopping_cart.length; i++){
-        rentItem_method(shopping_cart[i]._id, user_id, )
-
+const itemRentedByUser = async(req, res)=>{
+    const user = req.user.userID
+    console.log(user)
+    const rentItem = await rentItems.find({user_id:user})
+    console.log(rentItem)
+    const array = []
+    for(let i =0; i<rentItem.length;i++){
+        const item  = await carListings.findOne({_id:rentItem[i].item_id})
+        array.push(item)
     }
+    return res.status(StatusCodes.OK).json({message:"success", data:array , status_code:StatusCodes.OK})
+
 }
 
-
-module.exports = {rentItem, stripePayment,sendPaymentEmail, mostRentedItems, mostRentedItemsForUser}
+module.exports = {rentItem, stripePayment,sendPaymentEmail, mostRentedItems, mostRentedItemsForUser, itemRentedByUser}
