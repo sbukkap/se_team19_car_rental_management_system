@@ -54,6 +54,21 @@ const updateComplaintResolveStatus = async(req, res)=>{
     res.status(StatusCodes.OK).json({message:"update Succesful", data: statusUpdate, status_code:StatusCodes.OK})
 }
 
+const deleteComplaint = async (req, res) => {
+    const item_id = req.params.id;
+    try {
+      const deletedComplaint = await ticketsSchema.findByIdAndDelete(item_id);
+      if (!deletedComplaint) {
+        return res.status(StatusCodes.NOT_FOUND).json({ message: "Complaint not found", data: {}, status_code: StatusCodes.NOT_FOUND });
+      }
+      res.status(StatusCodes.OK).json({ message: "Complaint deleted successfully", data: deletedComplaint, status_code: StatusCodes.OK });
+    } catch (error) {
+      console.error("Error deleting complaint:", error);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Failed to delete complaint", error: error.message, status_code: StatusCodes.INTERNAL_SERVER_ERROR });
+    }
+  };
+  
+
 const customersComplaintTheMost = async(req,res)=>{
     const tickets = await ticketsSchema.find({})
     console.log(tickets)
@@ -92,4 +107,4 @@ const ownerComplaintTheMost = async(req,res)=>{
     res.status(StatusCodes.OK).json({message:"success", data:responseObject , status_code:StatusCodes.OK})
 }
 
-module.exports = {launchComplaint, getComplaintsOnMyProduct, getMyComplaints, updateComplaintResolveStatus, adminGetAllComplaints, customersComplaintTheMost, ownerComplaintTheMost}
+module.exports = {launchComplaint, getComplaintsOnMyProduct, getMyComplaints, updateComplaintResolveStatus, deleteComplaint, adminGetAllComplaints, customersComplaintTheMost, ownerComplaintTheMost}
