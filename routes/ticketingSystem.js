@@ -3,7 +3,7 @@ const router = express.Router()
 
 
 
-const {launchComplaint, getComplaintsOnMyProduct, getMyComplaints, updateComplaintResolveStatus, adminGetAllComplaints, customersComplaintTheMost, ownerComplaintTheMost} = require("../controllers/ticketingSystem")
+const {launchComplaint, getComplaintsOnMyProduct, getMyComplaints,deleteComplaint, updateComplaintResolveStatus, adminGetAllComplaints, customersComplaintTheMost, ownerComplaintTheMost} = require("../controllers/ticketingSystem")
 
 router.post("/launchComplaint", launchComplaint)
 router.get("/getComplaintsOnMyProduct",getComplaintsOnMyProduct)
@@ -12,6 +12,7 @@ router.get("/adminGetAllComplaints",adminGetAllComplaints)
 router.patch("/updateComplaintResolveStatus/:id",updateComplaintResolveStatus)
 router.get("/adminCustomerWithMostComplaints/", customersComplaintTheMost)
 router.get("/adminOwnerWithMostComplaints", ownerComplaintTheMost)
+router.delete("/deleteComplaint/:id", deleteComplaint);
 
 
 module.exports = router
