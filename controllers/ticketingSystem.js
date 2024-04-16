@@ -40,7 +40,7 @@ const getMyComplaints = async(req, res)=>{
 }
 
 const adminGetAllComplaints = async(req,res)=>{
-    const tickets = await ticketsSchema.find({}).sort('createdAt')
+    const tickets = await ticketsSchema.find({resolveStatus:false}).sort('createdAt')
     if (!tickets){
         res.status(StatusCodes.OK).json({message:"no complaints",data:{},status_code:StatusCodes.OK})
     }
