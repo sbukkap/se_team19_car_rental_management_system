@@ -23,13 +23,18 @@ const stripePayment = async(req, res) =>{
     //     amount:total,
     //     currency: 'usd'
     // })
+    const item_name = await carListings.findOne({_id:request.item_id})
+    if (!item_name){
+            res.status(StatusCodes.BAD_REQUEST).json({message:"success", data:"not a valid id", status_code:StatusCodes.OK})
+
+    }
     const session = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],
             line_items: [{
                 price_data: {
                     currency: "usd",
                     product_data:{
-                        name:request.item_id
+                        name:item_name.carMake + " " + item_name.carModel
                     },
                     unit_amount: Math.round(total * 100), // amount in cents
               },
