@@ -41,8 +41,8 @@ const stripePayment = async(req, res) =>{
                 quantity: 1, // assuming one unit for now
             }],
             mode: "payment",
-            success_url: "http://localhost:3000/paymentSuccess",
-            cancel_url: "http://localhost:3000/paymentCancel"
+            success_url: "http://localhost:5173/paymentSuccess",
+            cancel_url: "http://localhost:5173/paymentCancel"
         });
           
     res.status(StatusCodes.OK).json({message:"success", data:{id:session.id}, status_code:StatusCodes.OK})
