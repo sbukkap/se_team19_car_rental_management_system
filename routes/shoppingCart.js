@@ -9,10 +9,9 @@ router.get("/isShoppingCartPresent/:userId", isShoppingCartPresent)
 router.post("/createShoppingcart", createShoppingcart)
 router.get("/get_Shoppingcart/:userId", get_Shoppingcart)
 router.patch("/updateShoppingcart/:userId", updateShoppingcart)
-router.delete("/deleteItemShoppingcart/:userId", deleteItemShoppingcart)
+router.delete("/deleteItemShoppingcart/:itemId", deleteItemShoppingcart)
 router.get("/get_Shoppingcart", get_Shoppingcart)
 router.patch("/updateShoppingcart", updateShoppingcart)
-router.delete("/deleteItemShoppingcart", deleteItemShoppingcart)
 router.get("/getRecommendation", recommendations)
 
 

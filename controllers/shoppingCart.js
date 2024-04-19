@@ -32,6 +32,10 @@ const get_Shoppingcart = async(req, res)=>{
     res.status(StatusCodes.OK).json({message:"success", data:shoppingcartUser, status_code:StatusCodes.OK})
 }
 
+const cartItems = async(req, res)=>{
+
+}
+
 const updateShoppingcart = async (req, res) => {
     try {
         const userId = req.params.userId;
@@ -73,29 +77,38 @@ const updateShoppingcart = async (req, res) => {
 };
 
 
-
-const deleteItemShoppingcart = async(req, res)=>{
+const deleteItemShoppingcart = async (req, res) => {
     try {
-        // TODO-> route
-
         // Extract itemId from the request parameters
         const itemId = req.params.itemId;
-    
-        // Find the cart item in the database and delete it
-        const cartItem = await shoppingCarthoppingCart.findOneAndRemove({ _id: itemId });
-    
-        // Check if the cart item was found and deleted
-        if (!cartItem) {
-          return res.status(404).json({ message: 'Cart item not found' });
+        const userId = req.headers.user_id; // Assuming you have user info in req.user
+
+        // Find the cart by userId
+        // console.log(userId)
+        const cart = await shoppingCart.findOne({ user_id: userId });
+
+        if (!cart) {
+            return res.status(404).json({ message: 'Cart not found' });
         }
-    
-        // Return a success response
-        res.status(200).json({ message: 'Cart item deleted successfully' });
-      } catch (error) {
+
+        // Filter out the item with the specified ID from the cart items
+        const updatedItems = cart.items.filter((item) => item._id.toString() !== itemId);
+
+        // Update the cart's items array
+        cart.items = updatedItems;
+
+        // Save the updated cart
+        await cart.save();
+
+        // Return the updated cart
+        res.status(200).json({ message: 'Cart item deleted successfully', cart });
+    } catch (error) {
         console.error('Error deleting cart item:', error);
         res.status(500).json({ message: 'Server error. Please try again later.' });
-      }
-}
+    }
+};
+
+
 
 const recommendations = async(req, res)=>{
     const user_id = req.user.userId
