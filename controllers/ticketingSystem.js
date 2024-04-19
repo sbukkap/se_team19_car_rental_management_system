@@ -22,7 +22,7 @@ const launchComplaint = async(req,res)=>{
 
 const getComplaintsOnMyProduct = async(req, res)=>{
     const user = req.user.userID
-    const tickets = await ticketsSchema.find({itemOwnerId:user}).sort('createdAt')   
+    const tickets = await ticketsSchema.find({itemOwnerId:user, isDeleted:false}).sort('createdAt')   
     if(!tickets){
         res.status(StatusCodes.OK).json({message:"no complaints",data:{},status_code:StatusCodes.OK})
     }
@@ -40,7 +40,7 @@ const getMyComplaints = async(req, res)=>{
 }
 
 const adminGetAllComplaints = async(req,res)=>{
-    const tickets = await ticketsSchema.find({}).sort('createdAt')
+    const tickets = await ticketsSchema.find({resolveStatus:false, isDeleted:false}).sort('createdAt')
     if (!tickets){
         res.status(StatusCodes.OK).json({message:"no complaints",data:{},status_code:StatusCodes.OK})
     }
@@ -53,6 +53,30 @@ const updateComplaintResolveStatus = async(req, res)=>{
     const statusUpdate = await ticketsSchema.findOneAndUpdate({_id:item_id}, update_status, {new:true, runValidators:true})
     res.status(StatusCodes.OK).json({message:"update Succesful", data: statusUpdate, status_code:StatusCodes.OK})
 }
+
+const deleteComplaint = async (req, res) => {
+    const item_id = req.params.id;
+    try {
+      const deletedComplaint = await ticketsSchema.findByIdAndDelete(item_id);
+      if (!deletedComplaint) {
+        return res.status(StatusCodes.NOT_FOUND).json({ message: "Complaint not found", data: {}, status_code: StatusCodes.NOT_FOUND });
+      }
+      res.status(StatusCodes.OK).json({ message: "Complaint deleted successfully", data: deletedComplaint, status_code: StatusCodes.OK });
+    } catch (error) {
+      console.error("Error deleting complaint:", error);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Failed to delete complaint", error: error.message, status_code: StatusCodes.INTERNAL_SERVER_ERROR });
+    }
+  };
+
+  const softdelete = async(req, res) => {
+    const item_id = req.params.id;
+    const deletedComplaint = await ticketsSchema.findByIdAndUpdate(item_id, {isDeleted:true})
+     if (!deletedComplaint) {
+        return res.status(StatusCodes.NOT_FOUND).json({ message: "Complaint not found", data: {}, status_code: StatusCodes.NOT_FOUND });
+      }
+      res.status(StatusCodes.OK).json({ message: "Complaint deleted successfully", data: deletedComplaint, status_code: StatusCodes.OK }); 
+  }
+  
 
 const customersComplaintTheMost = async(req,res)=>{
     const tickets = await ticketsSchema.find({})
@@ -92,4 +116,4 @@ const ownerComplaintTheMost = async(req,res)=>{
     res.status(StatusCodes.OK).json({message:"success", data:responseObject , status_code:StatusCodes.OK})
 }
 
-module.exports = {launchComplaint, getComplaintsOnMyProduct, getMyComplaints, updateComplaintResolveStatus, adminGetAllComplaints, customersComplaintTheMost, ownerComplaintTheMost}
+module.exports = {launchComplaint, getComplaintsOnMyProduct, getMyComplaints, updateComplaintResolveStatus, deleteComplaint, adminGetAllComplaints, customersComplaintTheMost, ownerComplaintTheMost, softdelete}

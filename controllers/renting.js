@@ -23,21 +23,26 @@ const stripePayment = async(req, res) =>{
     //     amount:total,
     //     currency: 'usd'
     // })
+    const item_name = await carListings.findOne({_id:request.item_id})
+    if (!item_name){
+            res.status(StatusCodes.BAD_REQUEST).json({message:"success", data:"not a valid id", status_code:StatusCodes.OK})
+
+    }
     const session = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],
             line_items: [{
                 price_data: {
                     currency: "usd",
                     product_data:{
-                        name:request.item_id
+                        name:item_name.carMake + " " + item_name.carModel
                     },
                     unit_amount: Math.round(total * 100), // amount in cents
               },
                 quantity: 1, // assuming one unit for now
             }],
             mode: "payment",
-            success_url: "http://localhost:3000/paymentSuccess",
-            cancel_url: "http://localhost:3000/paymentCancel"
+            success_url: "http://localhost:5173/paymentSuccess",
+            cancel_url: "http://localhost:5173/paymentCancel"
         });
           
     res.status(StatusCodes.OK).json({message:"success", data:{id:session.id}, status_code:StatusCodes.OK})
@@ -107,21 +112,18 @@ const mostRentedItemsForUser = async(req,res)=>{
 
 
 
-const rentItem_method = async(item_id,user_id, payload )=>{
-    const owner_id = await carListings.findOne({_id:item_id})
-    payload.owner_id = owner_id.ownerId.toString()
-    payload.user_id = user_id
-    const rentItem = await rentItems.create(req.body)
-    const update = await carListings.findOneAndUpdate({_id:req.body.item_id},{rentStatus:true},{new:true, runValidators:true})
-}
-
-const rentItemsShoppingCart = async(req, res)=>{
-    const shopping_cart = await shoppingCart.findOne({_id:req.params.id})
-    for (let i =0; i<shopping_cart.length; i++){
-        rentItem_method(shopping_cart[i]._id, user_id, )
-
+const itemRentedByUser = async(req, res)=>{
+    const user = req.user.userID
+    console.log(user)
+    const rentItem = await rentItems.find({user_id:user})
+    console.log(rentItem)
+    const array = []
+    for(let i =0; i<rentItem.length;i++){
+        const item  = await carListings.findOne({_id:rentItem[i].item_id})
+        array.push(item)
     }
+    return res.status(StatusCodes.OK).json({message:"success", data:array , status_code:StatusCodes.OK})
+
 }
 
-
-module.exports = {rentItem, stripePayment,sendPaymentEmail, mostRentedItems, mostRentedItemsForUser}
+module.exports = {rentItem, stripePayment,sendPaymentEmail, mostRentedItems, mostRentedItemsForUser, itemRentedByUser}
