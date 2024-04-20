@@ -15,40 +15,55 @@ const rentItem = async(req,res)=>{
     res.status(StatusCodes.OK).json({message:"item rented", data:{rentItem}, status_code:StatusCodes.OK})
 }
 
-const stripePayment = async(req, res) =>{
-    const request = req.body
-    console.log(request)
-    const total = Number(request.cost) *  Number(request.duration)
-    // const paymentIntent = await stripe.paymentIntents.create({
-    //     amount:total,
-    //     currency: 'usd'
-    // })
-    const item_name = await carListings.findOne({_id:request.item_id})
-    if (!item_name){
-            res.status(StatusCodes.BAD_REQUEST).json({message:"success", data:"not a valid id", status_code:StatusCodes.OK})
+const stripePayment = async(req, res) => {
+    const request = req.body;
+    console.log(request);
 
+    // Validate request body
+    if (!Array.isArray(request.durations) || !Array.isArray(request.costs) || !Array.isArray(request.item_ids)) {
+        return res.status(StatusCodes.BAD_REQUEST).json({ message: "Invalid request body" });
     }
-    const session = await stripe.checkout.sessions.create({
-            payment_method_types: ["card"],
-            line_items: [{
+
+    try {
+        // Calculate total cost and construct line items array
+        let total = 0;
+        const lineItems = await Promise.all(request.item_ids.map(async (itemId, index) => {
+            const cost = Number(request.costs[index]);
+            total += cost * Number(request.durations[index]);
+
+            const item = await carListings.findOne({ _id: itemId });
+            if (!item) {
+                throw new Error(`Item with ID ${itemId} not found`);
+            }
+
+            return {
                 price_data: {
                     currency: "usd",
-                    product_data:{
-                        name:item_name.carMake + " " + item_name.carModel
+                    product_data: {
+                        name: `${item.carMake} ${item.carModel}`
                     },
-                    unit_amount: Math.round(total * 100), // amount in cents
-              },
+                    unit_amount: Math.round(cost * 100), // amount in cents
+                },
                 quantity: 1, // assuming one unit for now
-            }],
+            };
+        }));
+
+        // Create session with Stripe
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ["card"],
+            line_items: lineItems,
             mode: "payment",
             success_url: "http://localhost:5173/paymentSuccess",
             cancel_url: "http://localhost:5173/paymentCancel"
         });
-          
-    res.status(StatusCodes.OK).json({message:"success", data:{id:session.id}, status_code:StatusCodes.OK})
 
+        res.status(StatusCodes.OK).json({ message: "success", data: { id: session.id }, status_code: StatusCodes.OK });
+    } catch (error) {
+        console.error("Error processing payment:", error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Failed to process payment", error: error.message });
+    }
+};
 
-}
 
 
 const sendPaymentEmail = async(req,res)=>{ 
