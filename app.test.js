@@ -10,10 +10,11 @@ app.use(express.json());
 // Import route handlers
 const router = require("./routes/login");
 const carsListings = require("./routes/carsListings");
-
+const ticketSystem = require("./routes/ticketingSystem")
 // Setup routes
 app.use("/api/v1/auth", router);
 app.use("/api/v1/cars", authenticateUser, carsListings);
+app.use("/api/v1/ticketingSystem/", authenticateUser, ticketSystem)
 
 // Use environment variable or fallback for MongoDB URI
 const MONGO_URI = process.env.MONGO_URI;
