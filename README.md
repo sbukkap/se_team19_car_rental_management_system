@@ -1,3 +1,4 @@
+(This repository was forked from the parent repo https://github.com/seteam19/se_team19_car_rental_management_system. This is the backend repo for our final project on "Car rentals system". I'm forking it so that i can showcase it in my reposiotries for employers to check if needed :) )
 # software_enginnering_rental_management_system_backend
 
 # Rental & Services Management System
